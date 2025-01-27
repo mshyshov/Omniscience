@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Page Lookup{% endblock %}
+
+<body>
+    {% block topsection %}
+    <div class="top-section">
+        <textarea id="page-number" maxlength="1466" pattern="[0-9]*"
+            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+            placeholder="Enter page number (digits only)"></textarea>
+        <button onclick="
+                    fetch('/api/page', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            page_number: document.getElementById('page-number').value
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('page-number').value = data.page_number;
+                        document.getElementById('main-content').innerText = data.page;
+                    });" type="button">
+            Submit
+        </button>
+    </div>
+    {% endblock %}
+    {% block centralcontent %}<span id="main-content">Page content will appear here</span>{% endblock %}
