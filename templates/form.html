@@ -4,10 +4,64 @@
 <body>
     {% block topsection %}
     <div class="top-section">
-        <textarea id="page-number" maxlength="1466" pattern="[0-9]*"
-            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-            placeholder="Enter page number (digits only)"></textarea>
-        <button onclick="
+        <input type="text" id="page-number" placeholder="Enter page number">
+        <div id="validationMessage" style="color: red; margin-top: 5px;"></div>
+
+        <script src="/static/math.js"></script>
+        <script>
+            const input = document.getElementById('page-number');
+            const validationMessage = document.getElementById('validationMessage');
+
+            // Define max allowed value as string
+            const MAX_VALUE = '52058841447977422466306650800768460845035711587028762087026510429628906226879952706605296216838944708530773234945243898571006266248265602011320595606800448841498058223281093753832674976222351583079578317902157617483874393623718606010207755509875364350152856622874570887842276822148722690130721257900960053280759282403991093531270649416886091828400210162303209136261237584479515630616561225553325377912149606276738630016106114613889637762442302690116973861931389492090207824016724545175008374807345256152687155360679280068341624724020984843191420519441262978310148659753585986945716701694933164699474237212699813579834369704676343652199542039865939843245841770495420757295137460454643577337872217697494558971300779787433955817739808561058762719962067613112693999283344344036420167078910506278305990623781191707209785670079565710078526854083678562224463322675608524073083594133876649940848643380445690634958730473822643370260143972278370865722097583192912095607032223290597789710013911419388200738602088178157651558771795741127992318527705319005818071900544738909529211499683333574502119686290004976494740072938725706383826816238871139207121039500805757385755926382288711420339352188364869997683234599176440273478485176994201991887593631370881466640798751350734766327180637806848805356327898634411039817891092598261485418211355729368789163496207398426625753569985528619769853985669745329689698047964769779053677446100430681167279460966030896041454759802162941182832640';
+
+            input.addEventListener('input', function () {
+                // Remove any non-digit characters
+                this.value = this.value.replace(/\D/g, '');
+
+                if (this.value !== '') {
+                    try {
+                        // Compare as strings first for length check
+                        if (this.value.length > MAX_VALUE.length) {
+                            validationMessage.textContent = 'Value exceeds maximum allowed';
+                            this.value = MAX_VALUE;
+                        }
+                        else if (this.value.length === MAX_VALUE.length) {
+                            // Only do mathematical comparison if lengths are equal
+                            const comparison = math.compare(this.value, MAX_VALUE);
+                            if (comparison > 0) {
+                                validationMessage.textContent = 'Value exceeds maximum allowed';
+                                this.value = MAX_VALUE;
+                            } else {
+                                validationMessage.textContent = '';
+                            }
+                        }
+                        else if (this.value === '0' || this.value.charAt(0) === '0') {
+                            // Handle leading zeros
+                            this.value = this.value.replace(/^0+/, '') || '0';
+                            validationMessage.textContent = '';
+                        }
+                        else {
+                            validationMessage.textContent = '';
+                        }
+                    } catch (e) {
+                        validationMessage.textContent = 'Invalid number';
+                    }
+                } else {
+                    validationMessage.textContent = '';
+                }
+            });
+
+            // Handle paste events
+            input.addEventListener('paste', function (e) {
+                e.preventDefault();
+                const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+                this.value = pastedText.replace(/\D/g, '');
+                // Trigger input event to validate
+                this.dispatchEvent(new Event('input'));
+            });
+        </script>
+        <button onclick="console.log(document.getElementById('page-number').value);
                     fetch('/api/page', {
                         method: 'POST',
                         headers: {
