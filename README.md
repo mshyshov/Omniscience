@@ -40,10 +40,11 @@ Docker compose file is available too:
 ```yaml
 version: '3.9'
 services:
-    omniscience:
-        image: 'mshyshovua/omniscience:latest'
-        ports:
-            - '8000:8000'
+  omniscience:
+    image: 'mshyshovua/omniscience:latest'
+    ports:
+    - '8000:8000'
+
 ```
 
 The application can be accessed online at the address: https://omniscience.mshyshov.site
