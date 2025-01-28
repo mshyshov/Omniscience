@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from babel import babel
 from fastapi.staticfiles import StaticFiles
+import uvicorn
 
 
 app = FastAPI()
@@ -36,9 +37,9 @@ async def get_random_page(request: Request):
 @app.post("/api/page", response_model=APIResponse)
 async def get_page_by_number(page: APIPageLookupRequest, request: Request):
     page_number = page.page_number
-    try:  # validation
-        seed_int = int(page_number)  # checking if the seed is a valid integer
-        if seed_int > babel.TOTAL_PAGES - 1:  # checking if the seed is less that maximum
+    try:
+        seed_int = int(page_number)
+        if seed_int > babel.TOTAL_PAGES - 1:
             raise ValueError(f"Maximum page number is {babel.TOTAL_PAGES - 1}")
         if seed_int < 0:
             raise ValueError("Minimum page number is 0")
@@ -52,7 +53,6 @@ async def get_page_by_number(page: APIPageLookupRequest, request: Request):
         page_number=page_number,
         page=page,
     )
-
     return response
 
 
@@ -71,5 +71,6 @@ async def about(request: Request):
     return templates.TemplateResponse(request=request, name="about.html")
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    config = uvicorn.Config("main:app", host="0.0.0.0", port=8000, log_level="info")
+    server = uvicorn.Server(config)
+    server.run()
