@@ -15,30 +15,29 @@
 </script>
 {% endblock %}
 
-<body>
-    {% block topsection %}
-    <div class="top-section">
-        <div class="copy-box" id="copy-content">Page number will appear here</div>
-        <button hx-get="/api/random" hx-trigger="click" hx-swap="none" hx-on="htmx:afterRequest: 
+{% block topsection %}
+<div class="top-section">
+    <div class="copy-box" id="copy-content">Page number will appear here</div>
+    <button hx-get="/api/random" hx-trigger="click" hx-swap="none" hx-on="htmx:afterRequest: 
                     const response = JSON.parse(event.detail.xhr.response);
                     document.getElementById('copy-content').innerText = response.page_number;
                     document.getElementById('main-content').innerText = response.page;">
-            Refresh
-        </button>
-        <button hx-on="click: navigator.clipboard.writeText(document.getElementById('copy-content').innerText)">
-            Copy Page Number to Clipboard
-        </button>
-        <button hx-on="click: {
+        Refresh
+    </button>
+    <button hx-on="click: navigator.clipboard.writeText(document.getElementById('copy-content').innerText)">
+        Copy Page Number to Clipboard
+    </button>
+    <button hx-on="click: {
             const el = document.getElementById('copy-content');
             el.style.display = el.style.display === 'block' ? 'none' : 'block';
         }">
-            Toggle Page Number Visibility
-        </button>
+        Toggle Page Number Visibility
+    </button>
 
-    </div>
-    {% endblock %}
+</div>
+{% endblock %}
 
-    {% block centralcontent %}
-    <h3>Random Page:</h3>
-    <span id="main-content">Page content will appear here</span>
-    {% endblock %}
+{% block centralcontent %}
+<h3>Random Page:</h3>
+<span id="main-content">Page content will appear here</span>
+{% endblock %}
